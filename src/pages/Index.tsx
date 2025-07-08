@@ -1,17 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: 'white'}}>
-      <div className="text-center">
-        <h1 style={{color: 'black', fontSize: '32px', fontWeight: 'bold', marginBottom: '16px'}}>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center space-y-6">
+        <h1 className="text-4xl font-bold text-foreground">
           🔧 Testing Preview - Can you see this?
         </h1>
-        <p style={{color: 'gray', fontSize: '18px'}}>
+        <p className="text-xl text-muted-foreground">
           If you can see this message, the preview is working!
         </p>
-        <div style={{marginTop: '20px', padding: '10px', backgroundColor: 'lightblue', borderRadius: '8px'}}>
-          <p style={{color: 'black'}}>Preview Status: ✅ WORKING</p>
+        <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-900 rounded-lg border">
+          <p className="text-foreground font-medium">Preview Status: ✅ WORKING</p>
+        </div>
+        <div className="mt-8 p-6 bg-card border rounded-lg shadow-sm">
+          <h2 className="text-2xl font-semibold text-foreground mb-4">
+            Ready to Build Your Google Drive Image Uploader
+          </h2>
+          <p className="text-muted-foreground">
+            Once the preview is working, we can create your image upload functionality.
+          </p>
         </div>
       </div>
     </div>
