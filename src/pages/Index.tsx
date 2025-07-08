@@ -2,10 +2,17 @@
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: 'white'}}>
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+        <h1 style={{color: 'black', fontSize: '32px', fontWeight: 'bold', marginBottom: '16px'}}>
+          🔧 Testing Preview - Can you see this?
+        </h1>
+        <p style={{color: 'gray', fontSize: '18px'}}>
+          If you can see this message, the preview is working!
+        </p>
+        <div style={{marginTop: '20px', padding: '10px', backgroundColor: 'lightblue', borderRadius: '8px'}}>
+          <p style={{color: 'black'}}>Preview Status: ✅ WORKING</p>
+        </div>
       </div>
     </div>
   );
