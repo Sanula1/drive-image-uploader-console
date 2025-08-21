@@ -1,4 +1,7 @@
-import React from 'react';
+
+import React, { useState } from 'react';
+import Header from '@/components/layout/Header';
+import Sidebar from '@/components/layout/Sidebar';
 import Dashboard from '@/components/Dashboard';
 import Users from '@/components/Users';
 import Students from '@/components/Students';
@@ -30,35 +33,56 @@ interface AppContentProps {
   currentPage: string;
 }
 
-const AppContent: React.FC<AppContentProps> = ({ currentPage }) => {
+const AppContent: React.FC<AppContentProps> = ({ currentPage: initialPage }) => {
+  const [currentPage, setCurrentPage] = useState(initialPage || 'dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handlePageChange = (page: string) => {
+    setCurrentPage(page);
+    setSidebarOpen(false);
+  };
+
   return (
-    <div className="flex-1 overflow-auto">
-      {currentPage === 'dashboard' && <Dashboard />}
-      {currentPage === 'users' && <Users />}
-      {currentPage === 'students' && <Students />}
-      {currentPage === 'parents' && <Parents />}
-      {currentPage === 'teachers' && <Teachers />}
-      {currentPage === 'classes' && <Classes />}
-      {currentPage === 'subjects' && <Subjects />}
-      {currentPage === 'institutes' && <Institutes />}
-      {currentPage === 'attendance' && <Attendance />}
-      {currentPage === 'attendance-marking' && <AttendanceMarking />}
-      {currentPage === 'attendance-markers' && <AttendanceMarkers />}
-      {currentPage === 'new-attendance' && <NewAttendance />}
-      {currentPage === 'grades' && <Grades />}
-      {currentPage === 'grading' && <Grading />}
-      {currentPage === 'lectures' && <Lectures />}
-      {currentPage === 'live-lectures' && <LiveLectures />}
-      {currentPage === 'gallery' && <Gallery />}
-      {currentPage === 'homework' && <Homework />}
-      {currentPage === 'exams' && <Exams />}
-      {currentPage === 'results' && <Results />}
-      {currentPage === 'profile' && <Profile />}
-      {currentPage === 'institute-details' && <InstituteDetails />}
-      {currentPage === 'organizations' && <Organizations />}
-      {currentPage === 'payment' && <Payment />}
-      {currentPage === 'settings' && <Settings />}
-      {currentPage === 'appearance' && <Appearance />}
+    <div className="flex h-screen bg-background">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header onMenuClick={() => setSidebarOpen(true)} />
+        
+        <main className="flex-1 overflow-auto">
+          {currentPage === 'dashboard' && <Dashboard />}
+          {currentPage === 'users' && <Users />}
+          {currentPage === 'students' && <Students />}
+          {currentPage === 'parents' && <Parents />}
+          {currentPage === 'teachers' && <Teachers />}
+          {currentPage === 'classes' && <Classes />}
+          {currentPage === 'subjects' && <Subjects />}
+          {currentPage === 'institutes' && <Institutes />}
+          {currentPage === 'attendance' && <Attendance />}
+          {currentPage === 'attendance-marking' && <AttendanceMarking />}
+          {currentPage === 'attendance-markers' && <AttendanceMarkers />}
+          {currentPage === 'new-attendance' && <NewAttendance />}
+          {currentPage === 'grades' && <Grades />}
+          {currentPage === 'grading' && <Grading />}
+          {currentPage === 'lectures' && <Lectures />}
+          {currentPage === 'live-lectures' && <LiveLectures />}
+          {currentPage === 'gallery' && <Gallery />}
+          {currentPage === 'homework' && <Homework />}
+          {currentPage === 'exams' && <Exams />}
+          {currentPage === 'results' && <Results />}
+          {currentPage === 'profile' && <Profile />}
+          {currentPage === 'institute-details' && <InstituteDetails />}
+          {currentPage === 'organizations' && <Organizations />}
+          {currentPage === 'payment' && <Payment />}
+          {currentPage === 'settings' && <Settings />}
+          {currentPage === 'appearance' && <Appearance />}
+        </main>
+      </div>
     </div>
   );
 };

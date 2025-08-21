@@ -20,7 +20,7 @@ import {
   Calendar,
   FileVideo,
   FileSearch,
-  FileBarGraph,
+  BarChart3,
   X,
 } from "lucide-react"
 
@@ -165,7 +165,7 @@ export default function Sidebar({
     },
     {
       title: "Grading",
-      icon: FileBarGraph,
+      icon: BarChart3,
       onClick: () => onPageChange('grading'),
       active: currentPage === 'grading'
     },
