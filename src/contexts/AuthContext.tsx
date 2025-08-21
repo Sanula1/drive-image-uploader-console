@@ -1,5 +1,4 @@
-
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { 
   User, 
   Institute, 
@@ -37,7 +36,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedSubject, setSelectedSubjectState] = useState<Subject | null>(null);
   const [selectedChild, setSelectedChildState] = useState<Child | null>(null);
   const [selectedOrganization, setSelectedOrganizationState] = useState<Organization | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with true to check for existing token
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Public variables for current IDs - no localStorage sync
   const [currentInstituteId, setCurrentInstituteId] = useState<string | null>(null);
@@ -45,6 +45,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentSubjectId, setCurrentSubjectId] = useState<string | null>(null);
   const [currentChildId, setCurrentChildId] = useState<string | null>(null);
   const [currentOrganizationId, setCurrentOrganizationId] = useState<string | null>(null);
+
+  // Check for existing token on app initialization
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          console.log('Found existing token, validating...');
+          const userData = await validateToken();
+          const mappedUser = mapUserData(userData, []);
+          setUser(mappedUser);
+          console.log('Token validation successful, user restored');
+        } catch (error) {
+          console.error('Token validation failed on startup:', error);
+          // Clear invalid token
+          localStorage.removeItem('access_token');
+        }
+      }
+      setIsLoading(false);
+      setIsInitialized(true);
+    };
+
+    initializeAuth();
+  }, []);
 
   const fetchUserInstitutes = async (userId: string, forceRefresh = false): Promise<Institute[]> => {
     try {
@@ -258,7 +282,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     refreshUserData,
     validateUserToken,
     isAuthenticated: !!user,
-    isLoading
+    isLoading: isLoading || !isInitialized
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
