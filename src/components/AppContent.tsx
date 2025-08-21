@@ -35,7 +35,24 @@ const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { navigateToPage } = useAppNavigation();
-  const { isAuthenticated, login, isLoading } = useAuth();
+  const { isAuthenticated, login, validateUserToken, isLoading } = useAuth();
+
+  // Check for existing token on app startup
+  useEffect(() => {
+    const checkExistingToken = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token && !isAuthenticated && validateUserToken) {
+        try {
+          await validateUserToken();
+        } catch (error) {
+          console.error('Token validation failed on startup:', error);
+          // Token is invalid, user will see login screen
+        }
+      }
+    };
+
+    checkExistingToken();
+  }, [isAuthenticated, validateUserToken]);
 
   const handlePageChange = (page: string) => {
     setCurrentPage(page);
