@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/layout/Header';
@@ -37,12 +38,12 @@ import Gallery from '@/components/Gallery';
 import SystemPayments from '@/components/SystemPayments';
 
 const AppContent = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!isAuthenticated) {
-    return <Login />;
+    return <Login onLogin={() => {}} loginFunction={() => Promise.resolve()} />;
   }
 
   const renderPageContent = () => {
@@ -64,7 +65,7 @@ const AppContent = () => {
       case 'organizations':
         return <Organizations />;
       case 'organization-management':
-        return <OrganizationManagement />;
+        return <OrganizationManagement userRole={user?.role || 'STUDENT'} />;
       case 'organization-selector':
         return <OrganizationSelector />;
       case 'institute-selector':

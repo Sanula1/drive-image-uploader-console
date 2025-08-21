@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { DataTable } from '@/components/ui/data-table';
+import DataTable from '@/components/ui/data-table';
 import { useToast } from '@/hooks/use-toast';
 import { useApiRequest } from '@/hooks/useApiRequest';
 import { getMyPayments, Payment } from '@/api/payments.api';
@@ -70,66 +70,60 @@ const SystemPayments = () => {
   // Column definitions for the data table
   const columns = [
     {
-      accessorKey: 'id',
+      key: 'id',
       header: 'Payment ID',
-      cell: ({ row }) => (
-        <span className="font-mono text-sm">{row.getValue('id')}</span>
+      render: (value: string) => (
+        <span className="font-mono text-sm">{value}</span>
       )
     },
     {
-      accessorKey: 'paymentAmount',
+      key: 'paymentAmount',
       header: 'Amount',
-      cell: ({ row }) => (
+      render: (value: number) => (
         <span className="font-medium">
-          ${Number(row.getValue('paymentAmount')).toFixed(2)}
+          ${Number(value).toFixed(2)}
         </span>
       )
     },
     {
-      accessorKey: 'paymentMethod',
+      key: 'paymentMethod',
       header: 'Payment Method',
-      cell: ({ row }) => {
-        const method = row.getValue('paymentMethod') as string;
-        return (
-          <Badge variant="outline">
-            {method.replace('_', ' ')}
-          </Badge>
-        );
-      }
+      render: (value: string) => (
+        <Badge variant="outline">
+          {value.replace('_', ' ')}
+        </Badge>
+      )
     },
     {
-      accessorKey: 'status',
+      key: 'status',
       header: 'Status',
-      cell: ({ row }) => {
-        const status = row.getValue('status') as string;
-        const variant = status === 'VERIFIED' ? 'default' : 
-                      status === 'REJECTED' ? 'destructive' : 'secondary';
+      render: (value: string) => {
+        const variant = value === 'VERIFIED' ? 'default' : 
+                      value === 'REJECTED' ? 'destructive' : 'secondary';
         return (
-          <Badge variant={variant}>
-            {status}
+          <Badge variant={variant as any}>
+            {value}
           </Badge>
         );
       }
     },
     {
-      accessorKey: 'paymentDate',
+      key: 'paymentDate',
       header: 'Payment Date',
-      cell: ({ row }) => (
-        <span>{new Date(row.getValue('paymentDate')).toLocaleDateString()}</span>
+      render: (value: string) => (
+        <span>{new Date(value).toLocaleDateString()}</span>
       )
     },
     {
-      accessorKey: 'paymentMonth',
+      key: 'paymentMonth',
       header: 'Payment Month',
-      cell: ({ row }) => (
-        <span>{row.getValue('paymentMonth')}</span>
-      )
+      render: (value: string) => <span>{value}</span>
     },
     {
-      accessorKey: 'createdAt',
+      key: 'createdAt',
       header: 'Created At',
-      cell: ({ row }) => (
-        <span>{new Date(row.getValue('createdAt')).toLocaleDateString()}</span>
+      render: (value: string) => (
+        <span>{new Date(value).toLocaleDateString()}</span>
       )
     }
   ];
@@ -248,40 +242,46 @@ const SystemPayments = () => {
 
             <TabsContent value="pending" className="mt-6">
               <DataTable
+                title="Pending Payments"
                 columns={columns}
                 data={getFilteredPayments('pending')}
-                loading={loading}
-                pagination={{
-                  page: pagination.page,
-                  totalPages: pagination.totalPages,
-                  onPageChange: handlePageChange
-                }}
+                allowAdd={false}
+                allowEdit={false}
+                allowDelete={false}
+                currentPage={pagination.page}
+                totalItems={pagination.total}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
               />
             </TabsContent>
 
             <TabsContent value="verified" className="mt-6">
               <DataTable
+                title="Verified Payments"
                 columns={columns}
                 data={getFilteredPayments('verified')}
-                loading={loading}
-                pagination={{
-                  page: pagination.page,
-                  totalPages: pagination.totalPages,
-                  onPageChange: handlePageChange
-                }}
+                allowAdd={false}
+                allowEdit={false}
+                allowDelete={false}
+                currentPage={pagination.page}
+                totalItems={pagination.total}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
               />
             </TabsContent>
 
             <TabsContent value="rejected" className="mt-6">
               <DataTable
+                title="Rejected Payments"
                 columns={columns}
                 data={getFilteredPayments('rejected')}
-                loading={loading}
-                pagination={{
-                  page: pagination.page,
-                  totalPages: pagination.totalPages,
-                  onPageChange: handlePageChange
-                }}
+                allowAdd={false}
+                allowEdit={false}
+                allowDelete={false}
+                currentPage={pagination.page}
+                totalItems={pagination.total}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
               />
             </TabsContent>
           </Tabs>
