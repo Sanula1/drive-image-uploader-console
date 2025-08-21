@@ -25,7 +25,8 @@ import {
   ArrowLeft,
   Notebook,
   Images,
-  Palette
+  Palette,
+  CreditCard
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,7 +43,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
   const getMenuItems = () => {
     // Special handling for Student role
     if (user?.role === 'Student') {
-      // 1. Student without institute - only show basic options
+      // 1. Student without institute - only show basic options including payment
       if (!selectedInstitute) {
         return [
           {
@@ -57,6 +58,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             label: 'Organizations',
             icon: Building2,
             permission: 'view-organizations',
+            alwaysShow: true
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
             alwaysShow: true
           }
         ];
@@ -153,7 +161,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
     // Special handling for Teacher role
     if (user?.role === 'Teacher') {
-      // 1. Teacher without institute - only show basic options
+      // 1. Teacher without institute - only show basic options including payment
       if (!selectedInstitute) {
         return [
           {
@@ -168,6 +176,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             label: 'Organizations',
             icon: Building2,
             permission: 'view-organizations',
+            alwaysShow: true
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
             alwaysShow: true
           }
         ];
@@ -286,6 +301,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             icon: LayoutDashboard,
             permission: 'view-dashboard',
             alwaysShow: false
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
+            alwaysShow: true
           }
         ];
       }
