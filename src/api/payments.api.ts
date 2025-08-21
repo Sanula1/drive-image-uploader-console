@@ -64,11 +64,7 @@ export const paymentsApi = {
       formData.append('paymentSlip', data.paymentSlip);
     }
 
-    const response = await apiClient.post('/payment', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post('/payment', formData);
     
     return response.data;
   },

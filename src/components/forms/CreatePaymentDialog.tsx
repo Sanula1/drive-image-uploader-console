@@ -87,10 +87,17 @@ export const CreatePaymentDialog = ({ open, onClose, onSuccess }: CreatePaymentD
   const onSubmit = async (data: PaymentFormData) => {
     setIsSubmitting(true);
     try {
-      await paymentsApi.createPayment({
-        ...data,
+      const requestData = {
+        paymentAmount: data.paymentAmount,
+        paymentMethod: data.paymentMethod,
+        paymentDate: data.paymentDate,
+        paymentMonth: data.paymentMonth,
+        paymentReference: data.paymentReference,
+        notes: data.notes,
         paymentSlip: selectedFile || undefined,
-      });
+      };
+      
+      await paymentsApi.createPayment(requestData);
       
       toast({
         title: "Payment submitted successfully!",

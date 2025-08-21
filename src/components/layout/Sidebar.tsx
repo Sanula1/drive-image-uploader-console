@@ -24,7 +24,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AccessControl } from '@/utils/permissions';
+import { AccessControl, UserRole } from '@/utils/permissions';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -88,7 +88,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
   // Show payment section only for specific roles and when no institute is selected
   const showPaymentSection = !selectedInstitute && 
-    ['Student', 'Teacher', 'Parent', 'InstituteAdmin'].includes(user.role) &&
+    ['Student', 'Teacher', 'Parent', 'InstituteAdmin'].includes(user.role as UserRole) &&
     !selectedOrganization;
 
   return (
@@ -149,7 +149,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             </h3>
             <div className="space-y-1">
               {navigationItems.map((item) => {
-                if (item.permission && !AccessControl.hasPermission(user.role, item.permission as any)) {
+                if (item.permission && !AccessControl.hasPermission(user.role as UserRole, item.permission as any)) {
                   return null;
                 }
 
