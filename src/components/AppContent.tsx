@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,7 @@ import TeacherExams from '@/components/TeacherExams';
 import TeacherLectures from '@/components/TeacherLectures';
 import AttendanceMarkerSubjectSelector from '@/components/AttendanceMarkerSubjectSelector';
 import InstituteUsers from '@/components/InstituteUsers';
+import Payment from '@/components/Payment';
 
 const AppContent = () => {
   const { user, login, selectedInstitute, selectedClass, selectedSubject, selectedChild, selectedOrganization, setSelectedOrganization, currentInstituteId } = useAuth();
@@ -250,6 +252,11 @@ const AppContent = () => {
       );
     }
 
+    // Handle Payment page
+    if (currentPage === 'payment') {
+      return <Payment />;
+    }
+
     // For Organization Manager - show organizations list or organization-specific dashboard
     if (user?.role === 'OrganizationManager') {
       if (!selectedOrganization && currentPage !== 'organizations') {
@@ -300,12 +307,12 @@ const AppContent = () => {
 
     // For Student role - simplified interface
     if (user?.role === 'Student') {
-      if (!selectedInstitute && user.institutes.length === 1) {
+      if (!selectedInstitute && user.institutes?.length === 1) {
         // Auto-select the only institute available
         // This should be handled by the auth context
       }
       
-      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute') {
+      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute' && currentPage !== 'organizations' && currentPage !== 'payment' && currentPage !== 'profile' && currentPage !== 'appearance') {
         return <InstituteSelector />;
       }
 
@@ -367,7 +374,7 @@ const AppContent = () => {
 
     // For Teacher role
     if (user?.role === 'Teacher') {
-      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute') {
+      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute' && currentPage !== 'organizations' && currentPage !== 'payment' && currentPage !== 'profile' && currentPage !== 'appearance') {
         return <InstituteSelector />;
       }
 
@@ -468,8 +475,14 @@ const AppContent = () => {
     }
 
     // For InstituteAdmin and other roles - full access within their institute
-    if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute') {
-      return <InstituteSelector />;
+    if (user?.role === 'InstituteAdmin') {
+      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute' && currentPage !== 'organizations' && currentPage !== 'payment' && currentPage !== 'profile' && currentPage !== 'appearance') {
+        return <InstituteSelector />;
+      }
+    } else {
+      if (!selectedInstitute && currentPage !== 'institutes' && currentPage !== 'select-institute') {
+        return <InstituteSelector />;
+      }
     }
 
     if (currentPage === 'select-class') {

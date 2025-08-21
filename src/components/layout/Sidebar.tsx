@@ -1,32 +1,7 @@
+
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { X, Home, Users, GraduationCap, UserCheck, Building2, BookOpen, ClipboardList, Calendar, FileText, BarChart3, Settings, User, Palette, CreditCard, Building } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { AccessControl } from '@/utils/permissions';
-import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  UserCheck,
-  BookOpen,
-  School,
-  ClipboardList,
-  BarChart3,
-  Settings,
-  User,
-  Building2,
-  QrCode,
-  X,
-  Award,
-  Video,
-  LogOut,
-  Menu,
-  FileText,
-  ArrowLeft,
-  Notebook,
-  Images,
-  Palette
-} from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -35,967 +10,11 @@ interface SidebarProps {
   onPageChange: (page: string) => void;
 }
 
-const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) => {
-  const { user, selectedInstitute, selectedClass, selectedSubject, selectedChild, selectedOrganization, logout, setSelectedInstitute, setSelectedClass, setSelectedSubject, setSelectedChild, setSelectedOrganization } = useAuth();
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, currentPage, onPageChange }) => {
+  const { user, selectedInstitute, logout } = useAuth();
 
-  // Get menu items based on current selection state
-  const getMenuItems = () => {
-    // Special handling for Student role
-    if (user?.role === 'Student') {
-      // 1. Student without institute - only show basic options
-      if (!selectedInstitute) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Select Institutes',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'organizations',
-            label: 'Organizations',
-            icon: Building2,
-            permission: 'view-organizations',
-            alwaysShow: true
-          }
-        ];
-      }
-
-      // 2. Student with institute selected (but no class)
-      if (selectedInstitute && !selectedClass) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // 3. Student with institute and class selected (but no subject)
-      if (selectedInstitute && selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // 4. Student with institute, class, and subject all selected
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          },
-          {
-            id: 'lectures',
-            label: 'Lectures',
-            icon: Video,
-            permission: 'view-lectures',
-            alwaysShow: false
-          },
-          {
-            id: 'homework',
-            label: 'Homework',
-            icon: Notebook,
-            permission: 'view-homework',
-            alwaysShow: false
-          },
-          {
-            id: 'exams',
-            label: 'Exams',
-            icon: Award,
-            permission: 'view-exams',
-            alwaysShow: false
-          },
-          {
-            id: 'results',
-            label: 'Results',
-            icon: ClipboardList,
-            permission: 'view-results',
-            alwaysShow: false
-          }
-        ];
-      }
-    }
-
-    // Special handling for Teacher role
-    if (user?.role === 'Teacher') {
-      // 1. Teacher without institute - only show basic options
-      if (!selectedInstitute) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Select Institutes',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'organizations',
-            label: 'Organizations',
-            icon: Building2,
-            permission: 'view-organizations',
-            alwaysShow: true
-          }
-        ];
-      }
-
-      // 2. Teacher with institute selected (but no class/subject)
-      if (selectedInstitute && !selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'organizations',
-            label: 'Organizations',
-            icon: Building2,
-            permission: 'view-organizations',
-            alwaysShow: true
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // 3. Teacher with institute and class selected (but no subject)
-      if (selectedInstitute && selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          },
-          {
-            id: 'students',
-            label: 'Students',
-            icon: GraduationCap,
-            permission: 'view-students',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // 4. Teacher with institute, class, and subject all selected
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          },
-          {
-            id: 'students',
-            label: 'Students',
-            icon: GraduationCap,
-            permission: 'view-students',
-            alwaysShow: false
-          }
-        ];
-      }
-    }
-
-    // Special handling for InstituteAdmin role
-    if (user?.role === 'InstituteAdmin') {
-      if (!selectedInstitute) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Select Institutes',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // If only institute is selected
-      if (selectedInstitute && !selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'organizations',
-            label: 'Organizations',
-            icon: Building2,
-            permission: 'view-organizations',
-            alwaysShow: true
-          },
-          {
-            id: 'institute-users',
-            label: 'Institute Users',
-            icon: Users,
-            permission: 'view-users',
-            alwaysShow: false
-          },
-          {
-            id: 'parents',
-            label: 'Parents',
-            icon: Users,
-            permission: 'view-parents',
-            alwaysShow: false
-          },
-          {
-            id: 'teachers',
-            label: 'Teachers',
-            icon: UserCheck,
-            permission: 'view-teachers',
-            alwaysShow: false
-          },
-          {
-            id: 'classes',
-            label: 'All Classes',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'subjects',
-            label: 'All Subjects',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // If institute and class are selected (but not subject)
-      if (selectedInstitute && selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'students',
-            label: 'Students',
-            icon: GraduationCap,
-            permission: 'view-students',
-            alwaysShow: false
-          },
-          {
-            id: 'classes',
-            label: 'All Classes',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'subjects',
-            label: 'All Subjects',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // If institute, class, and subject are all selected
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Dashboard',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          },
-          {
-            id: 'students',
-            label: 'Students',
-            icon: GraduationCap,
-            permission: 'view-students',
-            alwaysShow: false
-          },
-          {
-            id: 'lectures',
-            label: 'Lectures',
-            icon: Video,
-            permission: 'view-lectures',
-            alwaysShow: false
-          },
-          {
-            id: 'homework',
-            label: 'Homework',
-            icon: Notebook,
-            permission: 'view-homework',
-            alwaysShow: false
-          },
-          {
-            id: 'exams',
-            label: 'Exams',
-            icon: Award,
-            permission: 'view-exams',
-            alwaysShow: false
-          },
-          {
-            id: 'classes',
-            label: 'All Classes',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'subjects',
-            label: 'All Subjects',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          },
-          {
-            id: 'select-class',
-            label: 'Select Class',
-            icon: School,
-            permission: 'view-classes',
-            alwaysShow: false
-          },
-          {
-            id: 'select-subject',
-            label: 'Select Subject',
-            icon: BookOpen,
-            permission: 'view-subjects',
-            alwaysShow: false
-          }
-        ];
-      }
-    }
-
-    // Special handling for AttendanceMarker role - only show specific items when institute is selected
-    if (user?.role === 'AttendanceMarker') {
-      if (!selectedInstitute) {
-        return [
-          {
-            id: 'dashboard',
-            label: 'Select Institutes',
-            icon: LayoutDashboard,
-            permission: 'view-dashboard',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // For AttendanceMarker with institute selected, only show QR Attendance and selection options
-      return [
-        {
-          id: 'select-class',
-          label: 'Select Class',
-          icon: School,
-          permission: 'view-classes',
-          alwaysShow: false
-        },
-        {
-          id: 'select-subject',
-          label: 'Select Subject',
-          icon: BookOpen,
-          permission: 'view-subjects',
-          alwaysShow: false
-        }
-      ];
-    }
-
-    // Base items that are always available for all other users
-    const baseItems = [
-      {
-        id: 'dashboard',
-        label: selectedInstitute ? 'Dashboard' : 'Select Institutes',
-        icon: LayoutDashboard,
-        permission: 'view-dashboard',
-        alwaysShow: false
-      },
-      {
-        id: 'organizations',
-        label: 'Organizations',
-        icon: Building2,
-        permission: 'view-organizations',
-        alwaysShow: true // Always show organizations for all users
-      }
-    ];
-
-    // If no institute is selected, return basic navigation including organizations
-    if (!selectedInstitute) {
-      return baseItems;
-    }
-
-    // If institute is selected, show full navigation for other roles
-    return [
-      ...baseItems,
-      {
-        id: 'users',
-        label: 'Users',
-        icon: Users,
-        permission: 'view-users',
-        alwaysShow: false
-      },
-      {
-        id: 'students',
-        label: 'Students',
-        icon: GraduationCap,
-        permission: 'view-students',
-        alwaysShow: false
-      },
-      {
-        id: 'parents',
-        label: 'Parents',
-        icon: Users,
-        permission: 'view-parents',
-        alwaysShow: false
-      },
-      // Remove teachers section for SystemAdmin
-      ...(user?.role !== 'SystemAdmin' ? [{
-        id: 'teachers',
-        label: 'Teachers',
-        icon: UserCheck,
-        permission: 'view-teachers',
-        alwaysShow: false
-      }] : []),
-      {
-        id: 'classes',
-        label: 'All Classes',
-        icon: School,
-        permission: 'view-classes',
-        alwaysShow: false
-      },
-      {
-        id: 'subjects',
-        label: 'All Subjects',
-        icon: BookOpen,
-        permission: 'view-subjects',
-        alwaysShow: false
-      },
-      // Only show selection options for non-SystemAdmin users
-      ...(user?.role !== 'SystemAdmin' ? [
-        {
-          id: 'select-class',
-          label: 'Select Class',
-          icon: School,
-          permission: 'view-classes',
-          alwaysShow: false
-        },
-        {
-          id: 'select-subject',
-          label: 'Select Subject',
-          icon: BookOpen,
-          permission: 'view-subjects',
-          alwaysShow: false
-        }
-      ] : []),
-      {
-        id: 'institutes',
-        label: 'Institutes',
-        icon: Building2,
-        permission: 'view-institutes',
-        alwaysShow: false
-      }
-    ];
-  };
-
-  const getAttendanceItems = () => {
-    // For Student - no additional attendance items needed as they are in main menu
-    if (user?.role === 'Student') {
-      return [];
-    }
-
-    // For Teacher - show specific attendance items based on selection state
-    if (user?.role === 'Teacher') {
-      // 3. Teacher with institute and class selected (but no subject)
-      if (selectedInstitute && selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          },
-          {
-            id: 'qr-attendance',
-            label: 'QR Attendance',
-            icon: QrCode,
-            permission: 'mark-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // 4. Teacher with institute, class, and subject all selected
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          },
-          {
-            id: 'qr-attendance',
-            label: 'QR Attendance',
-            icon: QrCode,
-            permission: 'mark-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // For other teacher states, no attendance items
-      return [];
-    }
-
-    // For InstituteAdmin - show specific attendance items based on selection
-    if (user?.role === 'InstituteAdmin') {
-      if (!selectedInstitute) {
-        return [];
-      }
-
-      // For InstituteAdmin with only institute selected
-      if (selectedInstitute && !selectedClass && !selectedSubject) {
-        return [
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          },
-          {
-            id: 'attendance-markers',
-            label: 'Attendance Markers',
-            icon: Users,
-            permission: 'manage-attendance-markers',
-            alwaysShow: false
-          },
-          {
-            id: 'qr-attendance',
-            label: 'QR Attendance',
-            icon: QrCode,
-            permission: 'mark-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-
-      // For InstituteAdmin with institute and class selected (or all three selected)
-      if (selectedInstitute && selectedClass) {
-        return [
-          {
-            id: 'attendance',
-            label: 'View Attendance',
-            icon: ClipboardList,
-            permission: 'view-attendance',
-            alwaysShow: false
-          },
-          {
-            id: 'qr-attendance',
-            label: 'QR Attendance',
-            icon: QrCode,
-            permission: 'mark-attendance',
-            alwaysShow: false
-          }
-        ];
-      }
-    }
-
-    // Default attendance items for other roles
-    const attendanceItems = [
-      {
-        id: 'attendance',
-        label: 'View Attendance',
-        icon: ClipboardList,
-        permission: 'view-attendance',
-        alwaysShow: false
-      },
-      {
-        id: 'attendance-marking',
-        label: 'Mark Attendance',
-        icon: UserCheck,
-        permission: 'mark-attendance',
-        alwaysShow: false
-      },
-      {
-        id: 'attendance-markers',
-        label: 'Attendance Markers',
-        icon: Users,
-        permission: 'manage-attendance-markers',
-        alwaysShow: false
-      },
-      {
-        id: 'qr-attendance',
-        label: 'QR Attendance',
-        icon: QrCode,
-        permission: 'mark-attendance',
-        alwaysShow: user?.role === 'AttendanceMarker' // Always show for AttendanceMarker
-      }
-    ];
-
-    return attendanceItems;
-  };
-
-  const getSystemItems = () => {
-    // For Student - no additional system items needed as they are in main menu
-    if (user?.role === 'Student') {
-      return [];
-    }
-
-    // For Teacher - show academic items only when institute, class, and subject are all selected
-    if (user?.role === 'Teacher') {
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'lectures',
-            label: 'Lectures',
-            icon: Video,
-            permission: 'view-lectures',
-            alwaysShow: false
-          },
-          {
-            id: 'homework',
-            label: 'Homework',
-            icon: Notebook,
-            permission: 'view-homework',
-            alwaysShow: false
-          },
-          {
-            id: 'exams',
-            label: 'Exams',
-            icon: FileText,
-            permission: 'view-exams',
-            alwaysShow: false
-          },
-          {
-            id: 'results',
-            label: 'Results',
-            icon: ClipboardList,
-            permission: 'view-results',
-            alwaysShow: false
-          }
-        ];
-      }
-      
-      // For other teacher selection states, return empty array
-      return [];
-    }
-
-    // For InstituteAdmin - show academic items when institute, class, and subject are all selected
-    if (user?.role === 'InstituteAdmin') {
-      if (selectedInstitute && selectedClass && selectedSubject) {
-        return [
-          {
-            id: 'lectures',
-            label: 'Lectures',
-            icon: Video,
-            permission: 'view-lectures',
-            alwaysShow: false
-          },
-          {
-            id: 'homework',
-            label: 'Homework',
-            icon: Notebook,
-            permission: 'view-homework',
-            alwaysShow: false
-          },
-          {
-            id: 'exams',
-            label: 'Exams',
-            icon: FileText,
-            permission: 'view-exams',
-            alwaysShow: false
-          },
-          {
-            id: 'results',
-            label: 'Results',
-            icon: ClipboardList,
-            permission: 'view-results',
-            alwaysShow: false
-          }
-        ];
-      }
-      
-      // For other InstituteAdmin selection states, return empty array
-      return [];
-    }
-
-    // Default system items for other roles
-    const systemItems = [
-      {
-        id: 'grading',
-        label: 'Grading',
-        icon: BarChart3,
-        permission: 'view-grading',
-        alwaysShow: false
-      },
-      {
-        id: 'live-lectures',
-        label: 'Live Lectures',
-        icon: Video,
-        permission: 'view-lectures',
-        alwaysShow: false
-      },
-      {
-        id: 'homework',
-        label: 'Homework',
-        icon: Notebook,
-        permission: 'view-homework',
-        alwaysShow: false
-      },
-      {
-        id: 'exams',
-        label: 'Exams',
-        icon: FileText,
-        permission: 'view-exams',
-        alwaysShow: false
-      },
-      {
-        id: 'results',
-        label: 'Results',
-        icon: ClipboardList,
-        permission: 'view-results',
-        alwaysShow: false
-      }
-    ];
-
-    return systemItems;
-  };
-
-  const getSettingsItems = () => {
-    // For Student - always show Profile and Appearance
-    if (user?.role === 'Student') {
-      return [
-        {
-          id: 'profile',
-          label: 'Profile',
-          icon: User,
-          permission: 'view-profile',
-          alwaysShow: false
-        },
-        {
-          id: 'appearance',
-          label: 'Appearance',
-          icon: Palette,
-          permission: 'view-appearance',
-          alwaysShow: false
-        }
-      ];
-    }
-
-    // For Teacher - show specific settings items based on selection state
-    if (user?.role === 'Teacher') {
-      return [
-        {
-          id: 'profile',
-          label: 'Profile',
-          icon: User,
-          permission: 'view-profile',
-          alwaysShow: false
-        },
-        {
-          id: 'appearance',
-          label: 'Appearance',
-          icon: Palette,
-          permission: 'view-appearance',
-          alwaysShow: false
-        }
-      ];
-    }
-
-    // For InstituteAdmin - always show specific settings items when institute is selected
-    if (user?.role === 'InstituteAdmin' && selectedInstitute) {
-      return [
-        {
-          id: 'profile',
-          label: 'Profile',
-          icon: User,
-          permission: 'view-profile',
-          alwaysShow: false
-        },
-        {
-          id: 'appearance',
-          label: 'Appearance',
-          icon: Palette,
-          permission: 'view-appearance',
-          alwaysShow: false
-        },
-        {
-          id: 'institute-details',
-          label: 'Institute Details',
-          icon: Building2,
-          permission: 'view-institute-details',
-          alwaysShow: false
-        }
-      ];
-    }
-
-    // Default settings items for other roles
-    const settingsItems = [
-      {
-        id: 'profile',
-        label: 'Profile',
-        icon: User,
-        permission: 'view-profile',
-        alwaysShow: false
-      },
-      {
-        id: 'appearance',
-        label: 'Appearance',
-        icon: Palette,
-        permission: 'view-appearance',
-        alwaysShow: false
-      },
-      ...(selectedInstitute ? [{
-        id: 'institute-details',
-        label: 'Institute Details',
-        icon: Building2,
-        permission: 'view-institute-details',
-        alwaysShow: false
-      }] : []),
-      {
-        id: 'settings',
-        label: 'Settings',
-        icon: Settings,
-        permission: 'view-settings',
-        alwaysShow: false
-      }
-    ];
-
-    return settingsItems;
-  };
-
-  const userRole = user?.role || 'Student';
-  const menuItems = getMenuItems();
-  const attendanceItems = getAttendanceItems();
-  const systemItems = getSystemItems();
-  const settingsItems = getSettingsItems();
-
-  const filterItemsByPermission = (items: any[]) => {
-    return items.filter(item => {
-      // Always show items marked as alwaysShow
-      if (item.alwaysShow) {
-        return true;
-      }
-      // Otherwise check permission
-      return AccessControl.hasPermission(userRole as any, item.permission);
-    });
-  };
-
-  const handleItemClick = (itemId: string) => {
-    console.log('Sidebar item clicked:', itemId);
-    onPageChange(itemId);
+  const handlePageChange = (page: string) => {
+    onPageChange(page);
     onClose();
   };
 
@@ -1004,215 +23,272 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
     onClose();
   };
 
-  const handleBackNavigation = () => {
-    if (selectedOrganization) {
-      // Go back from organization level to organization selection
-      setSelectedOrganization(null);
-    } else if (selectedChild) {
-      // Go back from child level to children selection
-      setSelectedChild(null);
-    } else if (selectedSubject) {
-      // Go back from subject level to class level
-      setSelectedSubject(null);
-    } else if (selectedClass) {
-      // Go back from class level to institute level
-      setSelectedClass(null);
-    } else if (selectedInstitute) {
-      // Go back from institute level to institute selection
-      setSelectedInstitute(null);
+  // Check if user should have limited navigation (no institute selected and specific roles)
+  const shouldShowLimitedNav = !selectedInstitute && 
+    (user?.role === 'InstituteAdmin' || user?.role === 'Teacher' || user?.role === 'Student');
+
+  // Limited navigation items for users without institute selection
+  const limitedNavItems = [
+    {
+      label: 'Select Institute',
+      icon: Building2,
+      page: 'select-institute',
+      roles: ['InstituteAdmin', 'Teacher', 'Student']
+    },
+    {
+      label: 'Organizations',
+      icon: Building,
+      page: 'organizations',
+      roles: ['InstituteAdmin', 'Teacher', 'Student']
+    },
+    {
+      label: 'Payment',
+      icon: CreditCard,
+      page: 'payment',
+      roles: ['InstituteAdmin', 'Teacher', 'Student']
+    },
+    {
+      label: 'Profile',
+      icon: User,
+      page: 'profile',
+      roles: ['InstituteAdmin', 'Teacher', 'Student']
+    },
+    {
+      label: 'Appearance',
+      icon: Palette,
+      page: 'appearance',
+      roles: ['InstituteAdmin', 'Teacher', 'Student']
     }
-  };
+  ];
 
-  const SidebarSection = ({ title, items }: { title: string; items: any[] }) => {
-    const filteredItems = filterItemsByPermission(items);
+  // Full navigation items
+  const getNavigationItems = () => {
+    const userRole = user?.role;
     
-    if (filteredItems.length === 0) return null;
+    if (userRole === 'Student') {
+      return [
+        { label: 'Dashboard', icon: Home, page: 'dashboard' },
+        { label: 'Attendance', icon: UserCheck, page: 'attendance' },
+        { label: 'Lectures', icon: BookOpen, page: 'lectures' },
+        { label: 'Homework', icon: ClipboardList, page: 'homework' },
+        { label: 'Exams', icon: FileText, page: 'exams' },
+        { label: 'Results', icon: BarChart3, page: 'results' }
+      ];
+    }
 
-    return (
-      <div className="mb-4 sm:mb-6">
-        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 px-3">
-          {title}
-        </h3>
-        <div className="space-y-1">
-          {filteredItems.map((item) => (
-            <Button
-              key={item.id}
-              variant={currentPage === item.id ? "secondary" : "ghost"}
-              className={`w-full justify-start h-9 sm:h-10 px-3 text-sm ${
-                currentPage === item.id 
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border-r-2 border-blue-600' 
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-              onClick={() => handleItemClick(item.id)}
-            >
-              <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-              {item.label}
-            </Button>
-          ))}
-        </div>
-      </div>
-    );
+    if (userRole === 'Parent') {
+      return [
+        { label: 'Dashboard', icon: Home, page: 'dashboard' },
+        { label: 'Children', icon: Users, page: 'parent-children' },
+        { label: 'Attendance', icon: UserCheck, page: 'attendance' },
+        { label: 'Homework', icon: ClipboardList, page: 'homework' },
+        { label: 'Results', icon: BarChart3, page: 'results' },
+        { label: 'Exams', icon: FileText, page: 'exams' }
+      ];
+    }
+
+    if (userRole === 'Teacher') {
+      return [
+        { label: 'Dashboard', icon: Home, page: 'dashboard' },
+        { label: 'Students', icon: GraduationCap, page: 'students' },
+        { label: 'Parents', icon: Users, page: 'parents' },
+        { label: 'Classes', icon: Users, page: 'classes' },
+        { label: 'Subjects', icon: BookOpen, page: 'subjects' },
+        { label: 'Grading', icon: BarChart3, page: 'grading' },
+        { label: 'Attendance', icon: UserCheck, page: 'attendance' },
+        { label: 'Mark Attendance', icon: UserCheck, page: 'attendance-marking' },
+        { label: 'QR Attendance', icon: UserCheck, page: 'qr-attendance' },
+        { label: 'Lectures', icon: BookOpen, page: 'lectures' },
+        { label: 'Homework', icon: ClipboardList, page: 'homework' },
+        { label: 'Exams', icon: FileText, page: 'exams' },
+        { label: 'Results', icon: BarChart3, page: 'results' }
+      ];
+    }
+
+    if (userRole === 'AttendanceMarker') {
+      return [
+        { label: 'Dashboard', icon: Home, page: 'dashboard' },
+        { label: 'QR Attendance', icon: UserCheck, page: 'qr-attendance' },
+        { label: 'Mark Attendance', icon: UserCheck, page: 'attendance-marking' }
+      ];
+    }
+
+    if (userRole === 'OrganizationManager') {
+      return [
+        { label: 'Dashboard', icon: Home, page: 'dashboard' },
+        { label: 'Organizations', icon: Building, page: 'organizations' },
+        { label: 'Students', icon: GraduationCap, page: 'students' },
+        { label: 'Lectures', icon: BookOpen, page: 'lectures' },
+        { label: 'Gallery', icon: FileText, page: 'gallery' }
+      ];
+    }
+
+    // Default for InstituteAdmin and other roles
+    return [
+      { label: 'Dashboard', icon: Home, page: 'dashboard' },
+      { label: 'Users', icon: Users, page: 'users' },
+      { label: 'Students', icon: GraduationCap, page: 'students' },
+      { label: 'Teachers', icon: Users, page: 'teachers' },
+      { label: 'Parents', icon: Users, page: 'parents' },
+      { label: 'Grades', icon: BarChart3, page: 'grades' },
+      { label: 'Classes', icon: Users, page: 'classes' },
+      { label: 'Subjects', icon: BookOpen, page: 'subjects' },
+      { label: 'Institutes', icon: Building2, page: 'institutes' },
+      { label: 'Grading', icon: BarChart3, page: 'grading' },
+      { label: 'Attendance', icon: UserCheck, page: 'attendance' },
+      { label: 'Mark Attendance', icon: UserCheck, page: 'attendance-marking' },
+      { label: 'Attendance Markers', icon: Users, page: 'attendance-markers' },
+      { label: 'QR Attendance', icon: UserCheck, page: 'qr-attendance' },
+      { label: 'Lectures', icon: BookOpen, page: 'lectures' },
+      { label: 'Homework', icon: ClipboardList, page: 'homework' },
+      { label: 'Exams', icon: FileText, page: 'exams' },
+      { label: 'Results', icon: BarChart3, page: 'results' }
+    ];
   };
+
+  // Determine which navigation items to show
+  const navigationItems = shouldShowLimitedNav 
+    ? limitedNavItems.filter(item => item.roles.includes(user?.role || ''))
+    : getNavigationItems();
 
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <div className={`
-        fixed md:static inset-y-0 left-0 z-50
-        w-72 sm:w-80 md:w-64 lg:w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-        transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        flex flex-col h-screen
+        fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
+        transform transition-transform duration-300 ease-in-out z-50
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:relative md:translate-x-0 md:z-0
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-2 min-w-0">
-            <School className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
-            <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">
-              EduSystem
-            </span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
-              aria-label="Close Sidebar"
-            >
-              <X className="h-4 w-4 md:hidden" />
-              <Menu className="h-4 w-4 hidden md:block" />
-            </Button>
-          </div>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="font-bold text-lg text-gray-900 dark:text-white">
+            {shouldShowLimitedNav ? 'Navigation' : 'Menu'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden"
+          >
+            <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          </button>
         </div>
 
-        {/* Context Info - Only show for non-SystemAdmin users */}
-        {user?.role !== 'SystemAdmin' && (selectedInstitute || selectedClass || selectedSubject || selectedChild || selectedOrganization) && (
-          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                Current Selection
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackNavigation}
-                className="h-6 w-6 p-0 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800"
-                aria-label="Go Back"
-              >
-                <ArrowLeft className="h-3 w-3" />
-              </Button>
+        {/* User Info */}
+        {user && (
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {user.role}
+                </p>
+              </div>
             </div>
-            <div className="space-y-1 text-xs">
-              {selectedOrganization && (
-                <div className="text-blue-600 dark:text-blue-400">
-                  <span className="font-medium">Organization:</span> 
-                  <span className="ml-1 truncate">{selectedOrganization.name}</span>
-                </div>
-              )}
-              {selectedInstitute && (
-                <div className="text-blue-600 dark:text-blue-400">
-                  <span className="font-medium">Institute:</span> 
-                  <span className="ml-1 truncate">{selectedInstitute.name}</span>
-                </div>
-              )}
-              {selectedClass && (
-                <div className="text-blue-600 dark:text-blue-400">
-                  <span className="font-medium">Class:</span> 
-                  <span className="ml-1 truncate">{selectedClass.name}</span>
-                </div>
-              )}
-              {selectedSubject && (
-                <div className="text-blue-600 dark:text-blue-400">
-                  <span className="font-medium">Subject:</span> 
-                  <span className="ml-1 truncate">{selectedSubject.name}</span>
-                </div>
-              )}
-              {selectedChild && (
-                <div className="text-blue-600 dark:text-blue-400">
-                  <span className="font-medium">Child:</span> 
-                  <span className="ml-1 truncate">
-                    {selectedChild.user.firstName} {selectedChild.user.lastName}
-                  </span>
-                </div>
-              )}
-            </div>
+            {selectedInstitute && (
+              <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                Institute: {selectedInstitute.name}
+              </div>
+            )}
+            {shouldShowLimitedNav && (
+              <div className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                Please select an institute for full access
+              </div>
+            )}
           </div>
         )}
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 px-2 sm:px-3 py-3 sm:py-4">
+        <nav className="flex-1 overflow-y-auto p-4">
           <div className="space-y-2">
-            <SidebarSection title="Main" items={menuItems} />
-            
-            {/* Show attendance section for Teacher based on selection state */}
-            {user?.role === 'Teacher' && attendanceItems.length > 0 && (
-              <SidebarSection title="Attendance" items={attendanceItems} />
-            )}
-            
-            {/* Show attendance section when institute is selected for InstituteAdmin */}
-            {user?.role === 'InstituteAdmin' && selectedInstitute && (
-              <SidebarSection title="Attendance" items={attendanceItems} />
-            )}
-            
-            {/* For AttendanceMarker role, only show QR Attendance when institute is selected */}
-            {user?.role === 'AttendanceMarker' && selectedInstitute && (
-              <SidebarSection title="Attendance" items={attendanceItems} />
-            )}
-            
-            {/* For other roles, show attendance navigation based on role */}
-            {user?.role !== 'AttendanceMarker' && user?.role !== 'InstituteAdmin' && user?.role !== 'Teacher' && user?.role !== 'Student' && selectedInstitute && (
-              <SidebarSection title="Attendance" items={attendanceItems} />
-            )}
-            
-            {/* Show academic items for Teacher only when institute, class and subject are all selected */}
-            {user?.role === 'Teacher' && systemItems.length > 0 && (
-              <SidebarSection title="Academic" items={systemItems} />
-            )}
-            
-            {/* Show academic items for InstituteAdmin only when institute, class and subject are all selected */}
-            {user?.role === 'InstituteAdmin' && selectedInstitute && selectedClass && selectedSubject && (
-              <SidebarSection title="Academic" items={systemItems} />
-            )}
-            
-            {/* Show full academic section for other roles (excluding Student) */}
-            {selectedInstitute && user?.role !== 'AttendanceMarker' && user?.role !== 'InstituteAdmin' && user?.role !== 'Teacher' && user?.role !== 'Student' && (
-              <SidebarSection title="Academic" items={systemItems} />
-            )}
-            
-            <SidebarSection title="Settings" items={settingsItems} />
+            {navigationItems.map((item) => (
+              <button
+                key={item.page}
+                onClick={() => handlePageChange(item.page)}
+                className={`
+                  w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-colors
+                  ${currentPage === item.page 
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }
+                `}
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </button>
+            ))}
           </div>
-        </ScrollArea>
+        </nav>
 
         {/* Footer */}
-        <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 space-y-1">
-            <div className="truncate">
-              <span>Logged in as:</span> 
-              <span className="font-medium ml-1">{user?.name}</span>
-            </div>
-            <div>
-              <span>Role:</span> 
-              <span className="font-medium ml-1">{user?.role}</span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+          {!shouldShowLimitedNav && (
+            <>
+              <button
+                onClick={() => handlePageChange('profile')}
+                className={`
+                  w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-colors
+                  ${currentPage === 'profile' 
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }
+                `}
+              >
+                <User className="h-5 w-5" />
+                <span>Profile</span>
+              </button>
+              
+              <button
+                onClick={() => handlePageChange('appearance')}
+                className={`
+                  w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-colors
+                  ${currentPage === 'appearance' 
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }
+                `}
+              >
+                <Palette className="h-5 w-5" />
+                <span>Appearance</span>
+              </button>
+
+              <button
+                onClick={() => handlePageChange('settings')}
+                className={`
+                  w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-colors
+                  ${currentPage === 'settings' 
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }
+                `}
+              >
+                <Settings className="h-5 w-5" />
+                <span>Settings</span>
+              </button>
+            </>
+          )}
+
+          <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 h-8 sm:h-9"
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
-            <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="text-xs sm:text-sm">Logout</span>
-          </Button>
+            <X className="h-5 w-5" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </>
