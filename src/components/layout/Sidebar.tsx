@@ -313,7 +313,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
   };
 
   return (
-    <SidebarPrimitive isOpen={isOpen} onOpenChange={onClose}>
+    <SidebarPrimitive>
       <SidebarContent className="flex flex-col">
         <SidebarHeader>
           <h2 className="font-semibold text-lg">

@@ -3,7 +3,6 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { PaymentResponse } from '@/api/payments.api';
 import DataTable from '@/components/ui/data-table';
-import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
 interface PaymentsTableProps {
@@ -37,59 +36,59 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
     }).format(amount);
   };
 
-  const columns: ColumnDef<PaymentResponse>[] = [
+  const columns = [
     {
-      accessorKey: 'paymentAmount',
+      key: 'paymentAmount',
       header: 'Amount',
-      cell: ({ row }) => formatCurrency(row.original.paymentAmount),
+      render: (value: number) => formatCurrency(value),
     },
     {
-      accessorKey: 'paymentMethod',
+      key: 'paymentMethod',
       header: 'Payment Method',
-      cell: ({ row }) => (
+      render: (value: string) => (
         <Badge variant="outline">
-          {row.original.paymentMethod.replace('_', ' ')}
+          {value.replace('_', ' ')}
         </Badge>
       ),
     },
     {
-      accessorKey: 'paymentMonth',
+      key: 'paymentMonth',
       header: 'Payment Month',
-      cell: ({ row }) => {
-        const date = new Date(row.original.paymentMonth + '-01');
+      render: (value: string) => {
+        const date = new Date(value + '-01');
         return format(date, 'MMMM yyyy');
       },
     },
     {
-      accessorKey: 'paymentDate',
+      key: 'paymentDate',
       header: 'Payment Date',
-      cell: ({ row }) => {
-        return format(new Date(row.original.paymentDate), 'dd MMM yyyy');
+      render: (value: string) => {
+        return format(new Date(value), 'dd MMM yyyy');
       },
     },
     {
-      accessorKey: 'status',
+      key: 'status',
       header: 'Status',
-      cell: ({ row }) => (
-        <Badge variant={getStatusBadgeVariant(row.original.status)}>
-          {row.original.status}
+      render: (value: string) => (
+        <Badge variant={getStatusBadgeVariant(value)}>
+          {value}
         </Badge>
       ),
     },
     {
-      accessorKey: 'paymentReference',
+      key: 'paymentReference',
       header: 'Reference',
-      cell: ({ row }) => (
+      render: (value: string) => (
         <span className="text-sm text-muted-foreground">
-          {row.original.paymentReference || '-'}
+          {value || '-'}
         </span>
       ),
     },
     {
-      accessorKey: 'createdAt',
+      key: 'createdAt',
       header: 'Submitted',
-      cell: ({ row }) => {
-        return format(new Date(row.original.createdAt), 'dd MMM yyyy HH:mm');
+      render: (value: string) => {
+        return format(new Date(value), 'dd MMM yyyy HH:mm');
       },
     },
   ];
@@ -114,8 +113,12 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
 
   return (
     <DataTable
+      title={`${status.charAt(0).toUpperCase() + status.slice(1)} Payments`}
       columns={columns}
       data={payments}
+      allowAdd={false}
+      allowEdit={false}
+      allowDelete={false}
     />
   );
 };
