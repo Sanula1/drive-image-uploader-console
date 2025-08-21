@@ -35,24 +35,7 @@ const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { navigateToPage } = useAppNavigation();
-  const { isAuthenticated, validateUserToken, isLoading } = useAuth();
-
-  // Check for existing token on app startup
-  useEffect(() => {
-    const checkExistingToken = async () => {
-      const token = localStorage.getItem('access_token');
-      if (token && !isAuthenticated && validateUserToken) {
-        try {
-          await validateUserToken();
-        } catch (error) {
-          console.error('Token validation failed on startup:', error);
-          // Token is invalid, user will see login screen
-        }
-      }
-    };
-
-    checkExistingToken();
-  }, [isAuthenticated, validateUserToken]);
+  const { isAuthenticated, login, isLoading } = useAuth();
 
   const handlePageChange = (page: string) => {
     setCurrentPage(page);
@@ -61,6 +44,11 @@ const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleLogin = async (loginResponse: any) => {
+    // Login handled by the Login component itself via useAuth
+    console.log('Login successful:', loginResponse);
   };
 
   const renderPage = () => {
@@ -123,7 +111,12 @@ const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
 
   // Show login if not authenticated
   if (!isAuthenticated) {
-    return <Login />;
+    return (
+      <Login 
+        onLogin={handleLogin}
+        loginFunction={login}
+      />
+    );
   }
 
   return (
