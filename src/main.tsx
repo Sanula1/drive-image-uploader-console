@@ -1,17 +1,14 @@
 
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
 
-const container = document.getElementById("root");
-if (!container) {
-  throw new Error("Root element not found");
+console.log("Main.tsx is loading");
+
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  console.error("Root element not found!");
+} else {
+  console.log("Root element found, rendering App");
+  createRoot(rootElement).render(<App />);
 }
-
-const root = createRoot(container);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
