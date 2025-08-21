@@ -46,7 +46,6 @@ import TeacherExams from '@/components/TeacherExams';
 import TeacherLectures from '@/components/TeacherLectures';
 import AttendanceMarkerSubjectSelector from '@/components/AttendanceMarkerSubjectSelector';
 import InstituteUsers from '@/components/InstituteUsers';
-import SystemPayments from '@/components/SystemPayments';
 
 const AppContent = () => {
   const { user, login, selectedInstitute, selectedClass, selectedSubject, selectedChild, selectedOrganization, setSelectedOrganization, currentInstituteId } = useAuth();
@@ -571,11 +570,6 @@ const AppContent = () => {
   // If organizations page is active without login data, render full screen
   if (currentPage === 'organizations' && !selectedOrganization && !organizationLoginData) {
     return renderComponent();
-  }
-
-  // Handle system payments page
-  if (currentPage === 'system-payments') {
-    return <SystemPayments />;
   }
 
   return (
