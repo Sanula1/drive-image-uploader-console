@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import Dashboard from '@/components/Dashboard';
@@ -574,19 +573,24 @@ const AppContent = () => {
   }
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 flex w-full">
-        <Sidebar />
-        <SidebarInset>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div className="flex w-full h-screen">
+        <Sidebar 
+          isOpen={isSidebarOpen}
+          onClose={handleSidebarClose}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           <Header onMenuClick={handleMenuClick} />
           <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
             <div className="max-w-full">
               {renderComponent()}
             </div>
           </main>
-        </SidebarInset>
+        </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
