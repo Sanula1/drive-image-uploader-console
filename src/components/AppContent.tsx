@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import Sidebar from '@/components/layout/Sidebar';
@@ -47,13 +49,37 @@ import TeacherLectures from '@/components/TeacherLectures';
 import AttendanceMarkerSubjectSelector from '@/components/AttendanceMarkerSubjectSelector';
 import InstituteUsers from '@/components/InstituteUsers';
 
-const AppContent = () => {
+interface AppContentProps {
+  initialPage?: string;
+}
+
+const AppContent = ({ initialPage }: AppContentProps) => {
   const { user, login, selectedInstitute, selectedClass, selectedSubject, selectedChild, selectedOrganization, setSelectedOrganization, currentInstituteId } = useAuth();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const { navigateToPage, getPageFromPath } = useAppNavigation();
+  const location = useLocation();
+  
+  // Initialize currentPage from URL or prop
+  const [currentPage, setCurrentPageState] = useState(() => {
+    return initialPage || getPageFromPath(location.pathname);
+  });
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [organizationLoginData, setOrganizationLoginData] = useState<any>(null);
   const [showCreateOrgForm, setShowCreateOrgForm] = useState(false);
   const [organizationCurrentPage, setOrganizationCurrentPage] = useState('organizations');
+
+  // Update currentPage when URL changes
+  useEffect(() => {
+    const pageFromPath = getPageFromPath(location.pathname);
+    if (pageFromPath !== currentPage) {
+      setCurrentPageState(pageFromPath);
+    }
+  }, [location.pathname, currentPage, getPageFromPath]);
+
+  const setCurrentPage = (page: string) => {
+    setCurrentPageState(page);
+    navigateToPage(page);
+  };
 
   const handleMenuClick = () => {
     setIsSidebarOpen(!isSidebarOpen);
