@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { PaymentResponse } from '@/api/payments.api';
-import { DataTable } from '@/components/ui/data-table';
+import DataTable from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
