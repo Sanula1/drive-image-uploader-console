@@ -26,8 +26,7 @@ import {
   Notebook,
   Images,
   Palette,
-  CreditCard,
-  DollarSign
+  CreditCard
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -44,7 +43,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
   const getMenuItems = () => {
     // Special handling for Student role
     if (user?.role === 'Student') {
-      // 1. Student without institute - only show basic options
+      // 1. Student without institute - only show basic options including payment
       if (!selectedInstitute) {
         return [
           {
@@ -59,6 +58,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             label: 'Organizations',
             icon: Building2,
             permission: 'view-organizations',
+            alwaysShow: true
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
             alwaysShow: true
           }
         ];
@@ -155,7 +161,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
     // Special handling for Teacher role
     if (user?.role === 'Teacher') {
-      // 1. Teacher without institute - only show basic options
+      // 1. Teacher without institute - only show basic options including payment
       if (!selectedInstitute) {
         return [
           {
@@ -170,6 +176,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             label: 'Organizations',
             icon: Building2,
             permission: 'view-organizations',
+            alwaysShow: true
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
             alwaysShow: true
           }
         ];
@@ -288,6 +301,13 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
             icon: LayoutDashboard,
             permission: 'view-dashboard',
             alwaysShow: false
+          },
+          {
+            id: 'payment',
+            label: 'Payment',
+            icon: CreditCard,
+            permission: 'view-payment',
+            alwaysShow: true
           }
         ];
       }
@@ -603,33 +623,6 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
         label: 'Institutes',
         icon: Building2,
         permission: 'view-institutes',
-        alwaysShow: false
-      }
-    ];
-  };
-
-  // New function to get system payments items
-  const getSystemPaymentsItems = () => {
-    // Only show for specific user roles and when no institute is selected
-    const allowedRoles = ['Student', 'Teacher', 'Parent', 'InstituteAdmin'];
-    
-    if (!allowedRoles.includes(user?.role || '') || selectedInstitute) {
-      return [];
-    }
-
-    return [
-      {
-        id: 'system-payments',
-        label: 'My Payments',
-        icon: CreditCard,
-        permission: 'view-payments',
-        alwaysShow: false
-      },
-      {
-        id: 'payment-history',
-        label: 'Payment History',
-        icon: FileText,
-        permission: 'view-payment-history',
         alwaysShow: false
       }
     ];
@@ -1007,7 +1000,6 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
   const userRole = user?.role || 'Student';
   const menuItems = getMenuItems();
-  const systemPaymentsItems = getSystemPaymentsItems();
   const attendanceItems = getAttendanceItems();
   const systemItems = getSystemItems();
   const settingsItems = getSettingsItems();
@@ -1182,11 +1174,6 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
         <ScrollArea className="flex-1 px-2 sm:px-3 py-3 sm:py-4">
           <div className="space-y-2">
             <SidebarSection title="Main" items={menuItems} />
-            
-            {/* System Payments section - only show for specific roles when no institute is selected */}
-            {systemPaymentsItems.length > 0 && (
-              <SidebarSection title="System Payments" items={systemPaymentsItems} />
-            )}
             
             {/* Show attendance section for Teacher based on selection state */}
             {user?.role === 'Teacher' && attendanceItems.length > 0 && (
