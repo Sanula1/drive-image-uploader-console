@@ -1,3 +1,4 @@
+
 import {
   Home,
   LayoutDashboard,
@@ -17,7 +18,19 @@ import * as React from "react"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 
 import { useAuth } from "@/contexts/AuthContext"
-import { useSidebar } from "@/components/ui/sidebar"
+import { 
+  useSidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuAction,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton
+} from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -109,6 +122,16 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
       },
     ]
 
+    // Add payment item for specific user types
+    if (user?.userType === "InstituteAdmin" || user?.userType === "Teacher" || user?.userType === "Student") {
+      items.splice(-3, 0, {
+        id: "payment",
+        label: "Payment",
+        icon: Wallet,
+        children: [],
+      })
+    }
+
     if (user?.userType === "InstituteAdmin") {
       return items
     }
@@ -121,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
           item.id === "notifications" ||
           item.id === "profile" ||
           item.id === "help" ||
-		  item.id === "payment"
+          item.id === "payment"
       )
     }
 
@@ -132,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
           item.id === "notifications" ||
           item.id === "profile" ||
           item.id === "help" ||
-		  item.id === "payment"
+          item.id === "payment"
       )
     }
 
