@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Building, 
@@ -23,20 +24,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/contexts/types/auth.types';
-import {
-  Sidebar as SidebarPrimitive,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-  useSidebar,
-} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -70,37 +59,35 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
   };
 
   const renderSettingsSection = () => (
-    <SidebarGroup>
-      <SidebarGroupLabel>Settings</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={currentPage === 'profile'}
-              onClick={() => handlePageChange('profile')}
-            >
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={currentPage === 'appearance'}
-              onClick={() => handlePageChange('appearance')}
-            >
-              <Palette className="mr-2 h-4 w-4" />
-              <span>Appearance</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <div className="p-4">
+      <h3 className="font-medium text-sm text-muted-foreground mb-3">Settings</h3>
+      <div className="space-y-1">
+        <Button
+          variant={currentPage === 'profile' ? 'secondary' : 'ghost'}
+          className="w-full justify-start"
+          onClick={() => handlePageChange('profile')}
+        >
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
+        </Button>
+        <Button
+          variant={currentPage === 'appearance' ? 'secondary' : 'ghost'}
+          className="w-full justify-start"
+          onClick={() => handlePageChange('appearance')}
+        >
+          <Palette className="mr-2 h-4 w-4" />
+          <span>Appearance</span>
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={handleLogout}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Logout</span>
+        </Button>
+      </div>
+    </div>
   );
 
   const renderMainNavigation = () => {
@@ -110,43 +97,38 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
     if (!selectedInstitute) {
       return (
         <>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={currentPage === 'institutes'}
-                    onClick={() => handlePageChange('institutes')}
-                  >
-                    <Building className="mr-2 h-4 w-4" />
-                    <span>Institutes</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={currentPage === 'organizations'}
-                    onClick={() => handlePageChange('organizations')}
-                  >
-                    <Building2 className="mr-2 h-4 w-4" />
-                    <span>Organizations</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+          <div className="p-4">
+            <div className="space-y-1">
+              <Button
+                variant={currentPage === 'institutes' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => handlePageChange('institutes')}
+              >
+                <Building className="mr-2 h-4 w-4" />
+                <span>Institutes</span>
+              </Button>
+              
+              <Button
+                variant={currentPage === 'organizations' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => handlePageChange('organizations')}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>Organizations</span>
+              </Button>
 
-                {canSeeSystemPayments() && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      isActive={currentPage === 'system-payments'}
-                      onClick={() => handlePageChange('system-payments')}
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      <span>System Payments</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+              {canSeeSystemPayments() && (
+                <Button
+                  variant={currentPage === 'system-payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => handlePageChange('system-payments')}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  <span>System Payments</span>
+                </Button>
+              )}
+            </div>
+          </div>
           
           {renderSettingsSection()}
         </>
@@ -155,181 +137,178 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
     return (
       <>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'dashboard'}
-                  onClick={() => handlePageChange('dashboard')}
-                >
-                  <Building className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {(userRole === 'InstituteAdmin' || userRole === 'OrganizationManager') && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={currentPage === 'users'}
-                    onClick={() => handlePageChange('users')}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>Users</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'students'}
-                  onClick={() => handlePageChange('students')}
-                >
-                  <GraduationCap className="mr-2 h-4 w-4" />
-                  <span>Students</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'teachers'}
-                  onClick={() => handlePageChange('teachers')}
-                >
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  <span>Teachers</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'parents'}
-                  onClick={() => handlePageChange('parents')}
-                >
-                  <UserX className="mr-2 h-4 w-4" />
-                  <span>Parents</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'grades'}
-                  onClick={() => handlePageChange('grades')}
-                >
-                  <Trophy className="mr-2 h-4 w-4" />
-                  <span>Grades</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'classes'}
-                  onClick={() => handlePageChange('classes')}
-                >
-                  <ClipboardList className="mr-2 h-4 w-4" />
-                  <span>Classes</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'subjects'}
-                  onClick={() => handlePageChange('subjects')}
-                >
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  <span>Subjects</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'attendance'}
-                  onClick={() => handlePageChange('attendance')}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>Attendance</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'qr-attendance'}
-                  onClick={() => handlePageChange('qr-attendance')}
-                >
-                  <QrCode className="mr-2 h-4 w-4" />
-                  <span>QR Attendance</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'lectures'}
-                  onClick={() => handlePageChange('lectures')}
-                >
-                  <Video className="mr-2 h-4 w-4" />
-                  <span>Lectures</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'homework'}
-                  onClick={() => handlePageChange('homework')}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>Homework</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'exams'}
-                  onClick={() => handlePageChange('exams')}
-                >
-                  <TestTube className="mr-2 h-4 w-4" />
-                  <span>Exams</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'results'}
-                  onClick={() => handlePageChange('results')}
-                >
-                  <Trophy className="mr-2 h-4 w-4" />
-                  <span>Results</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'institute-details'}
-                  onClick={() => handlePageChange('institute-details')}
-                >
-                  <Building className="mr-2 h-4 w-4" />
-                  <span>Institute Details</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPage === 'gallery'}
-                  onClick={() => handlePageChange('gallery')}
-                >
-                  <Images className="mr-2 h-4 w-4" />
-                  <span>Gallery</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <div className="p-4">
+          <div className="space-y-1">
+            <Button
+              variant={currentPage === 'dashboard' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('dashboard')}
+            >
+              <Building className="mr-2 h-4 w-4" />
+              <span>Dashboard</span>
+            </Button>
+            {(userRole === 'InstituteAdmin' || userRole === 'OrganizationManager') && (
+              <Button
+                variant={currentPage === 'users' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => handlePageChange('users')}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                <span>Users</span>
+              </Button>
+            )}
+            <Button
+              variant={currentPage === 'students' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('students')}
+            >
+              <GraduationCap className="mr-2 h-4 w-4" />
+              <span>Students</span>
+            </Button>
+            <Button
+              variant={currentPage === 'teachers' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('teachers')}
+            >
+              <UserCheck className="mr-2 h-4 w-4" />
+              <span>Teachers</span>
+            </Button>
+            <Button
+              variant={currentPage === 'parents' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('parents')}
+            >
+              <UserX className="mr-2 h-4 w-4" />
+              <span>Parents</span>
+            </Button>
+            <Button
+              variant={currentPage === 'grades' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('grades')}
+            >
+              <Trophy className="mr-2 h-4 w-4" />
+              <span>Grades</span>
+            </Button>
+            <Button
+              variant={currentPage === 'classes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('classes')}
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
+              <span>Classes</span>
+            </Button>
+            <Button
+              variant={currentPage === 'subjects' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('subjects')}
+            >
+              <BookOpen className="mr-2 h-4 w-4" />
+              <span>Subjects</span>
+            </Button>
+            <Button
+              variant={currentPage === 'attendance' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('attendance')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              <span>Attendance</span>
+            </Button>
+            <Button
+              variant={currentPage === 'qr-attendance' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('qr-attendance')}
+            >
+              <QrCode className="mr-2 h-4 w-4" />
+              <span>QR Attendance</span>
+            </Button>
+            <Button
+              variant={currentPage === 'lectures' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('lectures')}
+            >
+              <Video className="mr-2 h-4 w-4" />
+              <span>Lectures</span>
+            </Button>
+            <Button
+              variant={currentPage === 'homework' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('homework')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              <span>Homework</span>
+            </Button>
+            <Button
+              variant={currentPage === 'exams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('exams')}
+            >
+              <TestTube className="mr-2 h-4 w-4" />
+              <span>Exams</span>
+            </Button>
+            <Button
+              variant={currentPage === 'results' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('results')}
+            >
+              <Trophy className="mr-2 h-4 w-4" />
+              <span>Results</span>
+            </Button>
+            <Button
+              variant={currentPage === 'institute-details' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('institute-details')}
+            >
+              <Building className="mr-2 h-4 w-4" />
+              <span>Institute Details</span>
+            </Button>
+            <Button
+              variant={currentPage === 'gallery' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => handlePageChange('gallery')}
+            >
+              <Images className="mr-2 h-4 w-4" />
+              <span>Gallery</span>
+            </Button>
+          </div>
+        </div>
         {renderSettingsSection()}
       </>
     );
   };
 
+  if (!isOpen) return null;
+
   return (
-    <SidebarPrimitive>
-      <SidebarContent className="flex flex-col">
-        <SidebarHeader>
+    <div className="fixed inset-0 z-50 lg:static lg:inset-auto">
+      {/* Backdrop for mobile */}
+      <div 
+        className="absolute inset-0 bg-black/50 lg:hidden" 
+        onClick={onClose}
+      />
+      
+      {/* Sidebar */}
+      <div className="relative w-64 h-full bg-background border-r flex flex-col ml-auto lg:ml-0">
+        {/* Header */}
+        <div className="p-4 border-b">
           <h2 className="font-semibold text-lg">
             {user?.firstName} {user?.lastName}
           </h2>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
-        </SidebarHeader>
-        <SidebarSeparator />
-        {renderMainNavigation()}
-        <SidebarFooter>
+        </div>
+        
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">
+          {renderMainNavigation()}
+        </div>
+        
+        {/* Footer */}
+        <div className="p-4 border-t">
           <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} My Company. All rights reserved.
           </p>
-        </SidebarFooter>
-      </SidebarContent>
-    </SidebarPrimitive>
+        </div>
+      </div>
+    </div>
   );
 };
 
