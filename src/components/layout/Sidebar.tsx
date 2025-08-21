@@ -1,4 +1,3 @@
-
 import {
   Home,
   LayoutDashboard,
@@ -235,10 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
           <SidebarMenuSub>
             {item.children.map((child: any) => (
               <SidebarMenuSubItem key={child.id}>
-                <SidebarMenuSubButton
-                  to={`${fullPath}/${child.id}`}
-                  asChild
-                >
+                <SidebarMenuSubButton asChild>
                   <NavLink
                     to={`${fullPath}/${child.id}`}
                     className={({ isActive }) =>

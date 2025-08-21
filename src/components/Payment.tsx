@@ -23,7 +23,7 @@ const Payment = () => {
 
   const handleFetchPayments = async () => {
     try {
-      const response: PaymentResponse = await fetchPayments({ status: selectedTab });
+      const response = await fetchPayments({ status: selectedTab }) as PaymentResponse;
       setPayments(response.payments);
       setTotal(response.total);
       toast.success(`Loaded ${response.payments.length} ${selectedTab.toLowerCase()} payments`);
