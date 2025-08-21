@@ -37,6 +37,9 @@ const App = () => {
             {/* Organization Routes */}
             <Route path="/organizations" element={<Index />} />
             
+            {/* System Payments Route */}
+            <Route path="/system-payments" element={<Index />} />
+            
             {/* User Management Routes */}
             <Route path="/users" element={<Index />} />
             <Route path="/students" element={<Index />} />

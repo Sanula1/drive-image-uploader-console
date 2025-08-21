@@ -48,6 +48,7 @@ import TeacherExams from '@/components/TeacherExams';
 import TeacherLectures from '@/components/TeacherLectures';
 import AttendanceMarkerSubjectSelector from '@/components/AttendanceMarkerSubjectSelector';
 import InstituteUsers from '@/components/InstituteUsers';
+import SystemPayments from '@/components/SystemPayments';
 
 interface AppContentProps {
   initialPage?: string;
@@ -596,6 +597,19 @@ const AppContent = ({ initialPage }: AppContentProps) => {
   // If organizations page is active without login data, render full screen
   if (currentPage === 'organizations' && !selectedOrganization && !organizationLoginData) {
     return renderComponent();
+  }
+
+  // Handle system payments route
+  if (currentPage === 'system-payments') {
+    const userRole = user?.role;
+    const allowedRoles = ['Student', 'Teacher', 'Parent', 'InstituteAdmin'];
+    
+    if (allowedRoles.includes(userRole || '') && !selectedInstitute) {
+      return <SystemPayments />;
+    }
+    
+    // Redirect to dashboard if not allowed or institute is selected
+    return <Dashboard />;
   }
 
   return (
