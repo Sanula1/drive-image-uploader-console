@@ -33,7 +33,7 @@ interface AppContentProps {
 
 const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Default to open on desktop
   const { navigateToPage } = useAppNavigation();
   const { isAuthenticated, login, validateUserToken, isLoading } = useAuth();
 
@@ -137,21 +137,22 @@ const AppContent = ({ initialPage = 'dashboard' }: AppContentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <Header onMenuClick={toggleSidebar} />
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar - Always visible on desktop, togglable on mobile */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
       
-      <div className="flex">
-        {/* Sidebar */}
-        <Sidebar
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Header */}
+        <Header onMenuClick={toggleSidebar} />
         
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-auto">
           {renderPage()}
         </main>
       </div>

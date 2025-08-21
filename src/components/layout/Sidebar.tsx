@@ -44,7 +44,10 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
   const handlePageChange = (page: string) => {
     onPageChange(page);
-    onClose();
+    // Only close on mobile
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
   };
 
   const getUserRole = (): UserRole => {
@@ -276,18 +279,24 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
     );
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 lg:static lg:inset-auto">
-      {/* Backdrop for mobile */}
-      <div 
-        className="absolute inset-0 bg-black/50 lg:hidden" 
-        onClick={onClose}
-      />
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          onClick={onClose}
+        />
+      )}
       
       {/* Sidebar */}
-      <div className="relative w-64 h-full bg-background border-r flex flex-col ml-auto lg:ml-0">
+      <div className={`
+        fixed lg:static inset-y-0 left-0 z-50
+        w-64 bg-background border-r flex flex-col
+        transform transition-transform duration-200 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${!isOpen ? 'lg:w-0 lg:border-0' : ''}
+      `}>
         {/* Header */}
         <div className="p-4 border-b">
           <h2 className="font-semibold text-lg">
@@ -308,7 +317,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
           </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
