@@ -25,7 +25,9 @@ import {
   ArrowLeft,
   Notebook,
   Images,
-  Palette
+  Palette,
+  CreditCard,
+  DollarSign
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -606,6 +608,33 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
     ];
   };
 
+  // New function to get system payments items
+  const getSystemPaymentsItems = () => {
+    // Only show for specific user roles and when no institute is selected
+    const allowedRoles = ['Student', 'Teacher', 'Parent', 'InstituteAdmin'];
+    
+    if (!allowedRoles.includes(user?.role || '') || selectedInstitute) {
+      return [];
+    }
+
+    return [
+      {
+        id: 'system-payments',
+        label: 'My Payments',
+        icon: CreditCard,
+        permission: 'view-payments',
+        alwaysShow: false
+      },
+      {
+        id: 'payment-history',
+        label: 'Payment History',
+        icon: FileText,
+        permission: 'view-payment-history',
+        alwaysShow: false
+      }
+    ];
+  };
+
   const getAttendanceItems = () => {
     // For Student - no additional attendance items needed as they are in main menu
     if (user?.role === 'Student') {
@@ -978,6 +1007,7 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
 
   const userRole = user?.role || 'Student';
   const menuItems = getMenuItems();
+  const systemPaymentsItems = getSystemPaymentsItems();
   const attendanceItems = getAttendanceItems();
   const systemItems = getSystemItems();
   const settingsItems = getSettingsItems();
@@ -1152,6 +1182,11 @@ const Sidebar = ({ isOpen, onClose, currentPage, onPageChange }: SidebarProps) =
         <ScrollArea className="flex-1 px-2 sm:px-3 py-3 sm:py-4">
           <div className="space-y-2">
             <SidebarSection title="Main" items={menuItems} />
+            
+            {/* System Payments section - only show for specific roles when no institute is selected */}
+            {systemPaymentsItems.length > 0 && (
+              <SidebarSection title="System Payments" items={systemPaymentsItems} />
+            )}
             
             {/* Show attendance section for Teacher based on selection state */}
             {user?.role === 'Teacher' && attendanceItems.length > 0 && (
