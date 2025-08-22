@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { type UserRole } from '@/contexts/AuthContext';
 import { Eye, EyeOff, GraduationCap, Wifi, WifiOff, Settings, Mail, Key, UserCheck, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getBaseUrl, getApiHeaders } from '@/contexts/utils/auth.api';
 
 // Mock user credentials for different roles
 const mockUsers = [
@@ -82,7 +84,7 @@ type LoginStep = 'login' | 'first-login-email' | 'first-login-otp' | 'first-logi
 const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [baseUrl, setBaseUrl] = useState('http://localhost:3000');
+  const [customBaseUrl, setCustomBaseUrl] = useState('');
   const [selectedRole, setSelectedRole] = useState<UserRole>('Student');
   const [showPassword, setShowPassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -105,18 +107,21 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
   
   const { toast } = useToast();
 
-  const getBaseUrl = () => {
-    return localStorage.getItem('baseUrl') || baseUrl;
-  };
+  // Initialize custom base URL from environment
+  useEffect(() => {
+    const envBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+    setCustomBaseUrl(envBaseUrl);
+  }, []);
 
-  const getAttendanceUrl = () => {
-    return localStorage.getItem('attendanceUrl') || attendanceUrl;
+  // Update environment variable when custom URL changes
+  const updateBaseUrl = () => {
+    if (customBaseUrl) {
+      // Store in localStorage as fallback for environment variable
+      localStorage.setItem('VITE_API_BASE_URL_OVERRIDE', customBaseUrl);
+    } else {
+      localStorage.removeItem('VITE_API_BASE_URL_OVERRIDE');
+    }
   };
-
-  const getApiHeaders = () => ({
-    'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true'
-  });
 
   // OTP Timer function
   const startOtpTimer = () => {
@@ -143,14 +148,18 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const testConnection = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${getBaseUrl()}/health`, {
+      updateBaseUrl(); // Update environment override before testing
+      const currentBaseUrl = getBaseUrl();
+      console.log('Testing connection to:', currentBaseUrl);
+      
+      const response = await fetch(`${currentBaseUrl}/health`, {
         headers: getApiHeaders(),
       });
       
       if (response.ok) {
         toast({
           title: "Connection Successful",
-          description: "Backend is reachable",
+          description: `Backend is reachable at ${currentBaseUrl}`,
         });
       } else {
         throw new Error(`Backend returned status: ${response.status}`);
@@ -496,14 +505,17 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
     setError('');
     setIsLoading(true);
 
-    // Store URLs in localStorage for other components to use
-    localStorage.setItem('baseUrl', getBaseUrl());
-    localStorage.setItem('attendanceUrl', getAttendanceUrl());
+    // Update the base URL override before login
+    updateBaseUrl();
+
+    // Store attendance URL in localStorage for other components to use
+    localStorage.setItem('attendanceUrl', attendanceUrl);
 
     try {
       if (useApiLogin) {
+        const currentBaseUrl = getBaseUrl();
         console.log('Attempting API login with credentials:', { email, password: '***' });
-        console.log('Using base URL:', getBaseUrl());
+        console.log('Using base URL:', currentBaseUrl);
         
         // Use the passed login function from AuthContext
         await loginFunction({ email, password });
@@ -617,16 +629,16 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
           {showSettings && (
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="baseUrl">Backend URL</Label>
+                <Label htmlFor="customBaseUrl">Backend URL</Label>
                 <Input
-                  id="baseUrl"
+                  id="customBaseUrl"
                   type="url"
-                  placeholder="Enter backend URL"
-                  value={baseUrl}
-                  onChange={(e) => setBaseUrl(e.target.value)}
+                  placeholder="Enter backend URL (e.g., https://your-api.com)"
+                  value={customBaseUrl}
+                  onChange={(e) => setCustomBaseUrl(e.target.value)}
                 />
                 <p className="text-xs text-gray-500">
-                  Current: {baseUrl}
+                  Current: {getBaseUrl()}
                 </p>
                 
                 <Label htmlFor="attendanceUrl">Attendance Backend URL</Label>

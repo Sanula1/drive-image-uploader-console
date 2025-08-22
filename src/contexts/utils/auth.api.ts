@@ -2,6 +2,13 @@
 import { LoginCredentials, ApiResponse, User } from '../types/auth.types';
 
 export const getBaseUrl = (): string => {
+  // Check for localStorage override first (set by Login component)
+  const localStorageOverride = localStorage.getItem('VITE_API_BASE_URL_OVERRIDE');
+  if (localStorageOverride) {
+    return localStorageOverride;
+  }
+  
+  // Then check environment variable
   return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 };
 
@@ -45,6 +52,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
   const baseUrl = getBaseUrl();
   
   console.log('Attempting login with credentials:', { email: credentials.email });
+  console.log('Using base URL:', baseUrl);
   
   const response = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
