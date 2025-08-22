@@ -82,7 +82,7 @@ type LoginStep = 'login' | 'first-login-email' | 'first-login-otp' | 'first-logi
 const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [baseUrl, setBaseUrl] = useState('https://localhost:3000');
+  const [baseUrl, setBaseUrl] = useState('http://localhost:3000');
   const [selectedRole, setSelectedRole] = useState<UserRole>('Student');
   const [showPassword, setShowPassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -101,7 +101,7 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otpTimer, setOtpTimer] = useState(0);
-  const [attendanceUrl, setAttendanceUrl] = useState('https://localhost:3001');
+  const [attendanceUrl, setAttendanceUrl] = useState('http://localhost:3001');
   
   const { toast } = useToast();
 
@@ -505,19 +505,6 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
         console.log('Attempting API login with credentials:', { email, password: '***' });
         console.log('Using base URL:', getBaseUrl());
         
-        // First test if backend is reachable
-        try {
-          const healthResponse = await fetch(`${getBaseUrl()}/health`, {
-            headers: getApiHeaders(),
-          });
-          if (!healthResponse.ok) {
-            throw new Error(`Backend health check failed: ${healthResponse.status}`);
-          }
-        } catch (healthError) {
-          console.error('Backend health check failed:', healthError);
-          throw new Error(`Cannot connect to backend server at ${getBaseUrl()}. Please ensure the backend is running and accessible. Check the Backend URL in settings and use 'Test Connection' to verify.`);
-        }
-        
         // Use the passed login function from AuthContext
         await loginFunction({ email, password });
         toast({
@@ -539,17 +526,10 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
     } catch (error) {
       console.error('Login failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      
-      // Provide more specific error messages for common issues
-      let displayError = errorMessage;
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Cannot connect')) {
-        displayError = `Cannot connect to backend server. Please check:\n• Backend server is running\n• Backend URL is correct: ${getBaseUrl()}\n• Use 'Test Connection' to verify connectivity\n• Check browser console for detailed errors`;
-      }
-      
-      setError(displayError);
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: displayError.split('\n')[0], // Show first line in toast
+        description: `Login failed: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {

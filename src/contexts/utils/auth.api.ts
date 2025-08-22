@@ -2,7 +2,7 @@
 import { LoginCredentials, ApiResponse, User } from '../types/auth.types';
 
 export const getBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL || 'https://localhost:3000';
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 };
 
 export const getBaseUrl2 = (): string => {
@@ -45,22 +45,15 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
   const baseUrl = getBaseUrl();
   
   console.log('Attempting login with credentials:', { email: credentials.email });
-  console.log('Backend URL:', baseUrl);
   
-  let response;
-  try {
-    response = await fetch(`${baseUrl}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true'
-      },
-      body: JSON.stringify(credentials)
-    });
-  } catch (fetchError) {
-    console.error('Network error during login:', fetchError);
-    throw new Error(`Failed to connect to backend server at ${baseUrl}. Please ensure the server is running and accessible.`);
-  }
+  const response = await fetch(`${baseUrl}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    },
+    body: JSON.stringify(credentials)
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
