@@ -45,15 +45,22 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
   const baseUrl = getBaseUrl();
   
   console.log('Attempting login with credentials:', { email: credentials.email });
+  console.log('Backend URL:', baseUrl);
   
-  const response = await fetch(`${baseUrl}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
-    },
-    body: JSON.stringify(credentials)
-  });
+  let response;
+  try {
+    response = await fetch(`${baseUrl}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      },
+      body: JSON.stringify(credentials)
+    });
+  } catch (fetchError) {
+    console.error('Network error during login:', fetchError);
+    throw new Error(`Failed to connect to backend server at ${baseUrl}. Please ensure the server is running and accessible.`);
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

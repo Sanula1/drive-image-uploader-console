@@ -505,6 +505,19 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
         console.log('Attempting API login with credentials:', { email, password: '***' });
         console.log('Using base URL:', getBaseUrl());
         
+        // First test if backend is reachable
+        try {
+          const healthResponse = await fetch(`${getBaseUrl()}/health`, {
+            headers: getApiHeaders(),
+          });
+          if (!healthResponse.ok) {
+            throw new Error(`Backend health check failed: ${healthResponse.status}`);
+          }
+        } catch (healthError) {
+          console.error('Backend health check failed:', healthError);
+          throw new Error(`Cannot connect to backend server at ${getBaseUrl()}. Please ensure the backend is running and accessible. Check the Backend URL in settings and use 'Test Connection' to verify.`);
+        }
+        
         // Use the passed login function from AuthContext
         await loginFunction({ email, password });
         toast({
@@ -526,10 +539,17 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
     } catch (error) {
       console.error('Login failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      setError(errorMessage);
+      
+      // Provide more specific error messages for common issues
+      let displayError = errorMessage;
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Cannot connect')) {
+        displayError = `Cannot connect to backend server. Please check:\n• Backend server is running\n• Backend URL is correct: ${getBaseUrl()}\n• Use 'Test Connection' to verify connectivity\n• Check browser console for detailed errors`;
+      }
+      
+      setError(displayError);
       toast({
         title: "Error",
-        description: `Login failed: ${errorMessage}`,
+        description: displayError.split('\n')[0], // Show first line in toast
         variant: "destructive",
       });
     } finally {
