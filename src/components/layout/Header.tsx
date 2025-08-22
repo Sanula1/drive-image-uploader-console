@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Menu, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ui/theme-toggle';
-import TranslationWidget from '@/components/ui/translation-widget';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +41,6 @@ const Header = ({ onMenuClick }: HeaderProps) => {
         </h1>
         
         <div className="flex items-center space-x-1 sm:space-x-2">
-          <TranslationWidget />
           <ThemeToggle />
           
           <DropdownMenu>
