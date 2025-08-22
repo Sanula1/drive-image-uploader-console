@@ -82,7 +82,7 @@ type LoginStep = 'login' | 'first-login-email' | 'first-login-otp' | 'first-logi
 const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [baseUrl, setBaseUrl] = useState('http://localhost:3000');
+  const [baseUrl, setBaseUrl] = useState('https://localhost:3000');
   const [selectedRole, setSelectedRole] = useState<UserRole>('Student');
   const [showPassword, setShowPassword] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -101,7 +101,7 @@ const Login = ({ onLogin, loginFunction }: LoginProps) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otpTimer, setOtpTimer] = useState(0);
-  const [attendanceUrl, setAttendanceUrl] = useState('http://localhost:3001');
+  const [attendanceUrl, setAttendanceUrl] = useState('https://localhost:3001');
   
   const { toast } = useToast();
 

@@ -2,7 +2,7 @@
 import { LoginCredentials, ApiResponse, User } from '../types/auth.types';
 
 export const getBaseUrl = (): string => {
-  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+  return import.meta.env.VITE_API_BASE_URL || 'https://localhost:3000';
 };
 
 export const getBaseUrl2 = (): string => {
