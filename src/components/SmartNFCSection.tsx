@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import smartNFCCard from "@/assets/smart-nfc-card.jpg";
+import surakshaCard from "@/assets/suraksha-card-design.jpg";
 
 const SmartNFCSection = () => {
   const [isRotating, setIsRotating] = useState(false);
@@ -14,8 +14,8 @@ const SmartNFCSection = () => {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    const rotateY = ((e.clientX - centerX) / rect.width) * 30;
-    const rotateX = ((centerY - e.clientY) / rect.height) * 30;
+    const rotateY = ((e.clientX - centerX) / rect.width) * 180;
+    const rotateX = ((centerY - e.clientY) / rect.height) * 180;
     
     setRotationY(rotateY);
     setRotationX(rotateX);
@@ -39,8 +39,8 @@ const SmartNFCSection = () => {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    const rotateY = ((touch.clientX - centerX) / rect.width) * 30;
-    const rotateX = ((centerY - touch.clientY) / rect.height) * 30;
+    const rotateY = ((touch.clientX - centerX) / rect.width) * 180;
+    const rotateX = ((centerY - touch.clientY) / rect.height) * 180;
     
     setRotationY(rotateY);
     setRotationX(rotateX);
@@ -74,8 +74,8 @@ const SmartNFCSection = () => {
                 }}
               >
                 <img 
-                  src={smartNFCCard}
-                  alt="Smart NFC Student ID Card"
+                  src={surakshaCard}
+                  alt="Suraksha LMS Smart NFC Student ID Card"
                   className="w-full h-full object-cover"
                   draggable={false}
                 />
