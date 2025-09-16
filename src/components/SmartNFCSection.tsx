@@ -7,6 +7,9 @@ import surakshaCardQR from "@/assets/suraksha-card-design.jpg";
 const SmartNFCSection = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
+  const [rotationY, setRotationY] = useState(0);
+  const [rotationX, setRotationX] = useState(0);
+  const [isFullRotating, setIsFullRotating] = useState(false);
 
   const cardTypes = [
     {
@@ -55,6 +58,67 @@ const SmartNFCSection = () => {
 
   const currentCardData = cardTypes[currentCard];
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isRotating || isFullRotating) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const rotateY = ((e.clientX - centerX) / rect.width) * 30;
+    const rotateX = ((centerY - e.clientY) / rect.height) * 30;
+    
+    setRotationY(rotateY);
+    setRotationX(rotateX);
+  };
+
+  const handleMouseEnter = () => {
+    if (!isFullRotating) {
+      setIsRotating(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isFullRotating) {
+      setIsRotating(false);
+      setRotationY(0);
+      setRotationX(0);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1 || isFullRotating) return;
+    
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const rotateY = ((touch.clientX - centerX) / rect.width) * 30;
+    const rotateX = ((centerY - touch.clientY) / rect.height) * 30;
+    
+    setRotationY(rotateY);
+    setRotationX(rotateX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isFullRotating) {
+      setRotationY(0);
+      setRotationX(0);
+    }
+  };
+
+  const handleCardClick = () => {
+    setIsFullRotating(true);
+    setIsRotating(false);
+    setRotationY(0);
+    setRotationX(0);
+    
+    setTimeout(() => {
+      setIsFullRotating(false);
+    }, 1000);
+  };
+
   return (
     <section className="py-12 md:py-16 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900">
       <div className="container mx-auto px-4">
@@ -82,14 +146,22 @@ const SmartNFCSection = () => {
           <div className="flex justify-center lg:justify-start">
             <div 
               className="perspective-1000 cursor-pointer"
-              onClick={() => setIsRotating(!isRotating)}
+              onMouseMove={handleMouseMove}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onClick={handleCardClick}
               style={{ perspective: '1000px' }}
             >
               <div 
-                className="w-80 h-48 md:w-96 md:h-60 shadow-2xl transition-transform duration-1000 ease-out rounded-lg overflow-hidden"
+                className="w-80 h-48 md:w-96 md:h-60 shadow-2xl transition-transform duration-300 ease-out rounded-lg overflow-hidden"
                 style={{
-                  transform: isRotating ? 'rotateY(360deg)' : 'rotateY(0deg)',
-                  transformStyle: 'preserve-3d'
+                  transform: isFullRotating 
+                    ? 'rotateY(360deg)' 
+                    : `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`,
+                  transformStyle: 'preserve-3d',
+                  transitionDuration: isFullRotating ? '1000ms' : '300ms'
                 }}
               >
                 <img 
