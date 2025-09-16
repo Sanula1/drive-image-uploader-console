@@ -116,36 +116,36 @@ const SmartNFCSection = () => {
     
     setTimeout(() => {
       setIsFullRotating(false);
-    }, 1000);
+    }, 1500);
   };
 
   return (
     <section className="py-12 md:py-16 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Card Selection Tabs */}
-          <div className="flex justify-center lg:justify-start mb-6">
-            <div className="flex bg-white/10 backdrop-blur-sm rounded-lg p-1 gap-1">
-              {cardTypes.map((card, index) => (
-                <button
-                  key={card.id}
-                  onClick={() => setCurrentCard(index)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
-                    currentCard === index
-                      ? 'bg-white text-blue-600 shadow-md'
-                      : 'text-white hover:bg-white/10'
-                  }`}
-                >
-                  {card.id.toUpperCase()}
-                </button>
-              ))}
-            </div>
+        {/* Card Selection Tabs */}
+        <div className="flex justify-center mb-8">
+          <div className="flex bg-white/20 backdrop-blur-sm rounded-xl p-1 gap-1 shadow-lg">
+            {cardTypes.map((card, index) => (
+              <button
+                key={card.id}
+                onClick={() => setCurrentCard(index)}
+                className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  currentCard === index
+                    ? 'bg-white text-blue-600 shadow-lg transform scale-105'
+                    : 'text-white hover:bg-white/10 hover:scale-105'
+                }`}
+              >
+                {card.id.toUpperCase()}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* 3D Card Section */}
-          <div className="flex justify-center lg:justify-start">
+        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+          {/* 3D Card Section - Left Side */}
+          <div className="flex justify-center order-1 lg:order-1">
             <div 
-              className="perspective-1000 cursor-pointer"
+              className="perspective-1000 cursor-pointer group"
               onMouseMove={handleMouseMove}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -155,61 +155,73 @@ const SmartNFCSection = () => {
               style={{ perspective: '1000px' }}
             >
               <div 
-                className="w-80 h-48 md:w-96 md:h-60 shadow-2xl transition-transform duration-300 ease-out rounded-lg overflow-hidden"
+                className="w-80 h-48 md:w-96 md:h-60 lg:w-[420px] lg:h-[260px] shadow-2xl transition-all duration-300 ease-out rounded-2xl overflow-hidden group-hover:shadow-3xl"
                 style={{
                   transform: isFullRotating 
                     ? 'rotateY(360deg)' 
                     : `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`,
                   transformStyle: 'preserve-3d',
-                  transitionDuration: isFullRotating ? '1000ms' : '300ms'
+                  transitionDuration: isFullRotating ? '1500ms' : '300ms',
+                  transitionTimingFunction: isFullRotating ? 'cubic-bezier(0.4, 0, 0.2, 1)' : 'ease-out'
                 }}
               >
-                <img 
-                  src={currentCardData.image}
-                  alt={`Suraksha LMS ${currentCardData.name}`}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                />
+                <div className="relative w-full h-full">
+                  <img 
+                    src={currentCardData.image}
+                    alt={`Suraksha LMS ${currentCardData.name}`}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                </div>
               </div>
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                Click to rotate 360° or hover to interact
+              </p>
             </div>
           </div>
 
-          {/* Content Section */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {currentCardData.name}
-                <span className="block text-blue-600 dark:text-blue-400">
+          {/* Content Section - Right Side */}
+          <div className="space-y-8 order-2 lg:order-2">
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+                  {currentCardData.name}
+                </h2>
+                <p className="text-xl md:text-2xl text-blue-600 dark:text-blue-400 font-semibold">
                   {currentCardData.subtitle}
-                </span>
-              </h2>
+                </p>
+              </div>
               
-              <div className="space-y-3 text-gray-600 dark:text-gray-300">
-                <p className="leading-relaxed">
+              <div className="space-y-6 text-gray-600 dark:text-gray-300">
+                <p className="text-lg leading-relaxed">
                   {currentCardData.description}
                 </p>
                 
-                <div className="grid md:grid-cols-2 gap-3 my-4">
+                <div className="grid sm:grid-cols-2 gap-4">
                   {currentCardData.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className={`w-8 h-8 bg-${feature.icon}-100 dark:bg-${feature.icon}-900 rounded-full flex items-center justify-center`}>
-                        <div className={`w-4 h-4 bg-${feature.icon}-600 rounded-full`}></div>
+                    <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+                      <div className={`w-10 h-10 bg-${feature.icon}-100 dark:bg-${feature.icon}-900/50 rounded-full flex items-center justify-center flex-shrink-0`}>
+                        <div className={`w-5 h-5 bg-${feature.icon}-600 rounded-full`}></div>
                       </div>
-                      <span className="text-sm font-medium">{feature.text}</span>
+                      <span className="font-medium">{feature.text}</span>
                     </div>
                   ))}
                 </div>
                 
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  <strong>{currentCardData.name} Benefits:</strong> {currentCardData.highlight}
-                </p>
+                <div className="p-4 rounded-lg bg-blue-50/50 dark:bg-blue-900/20 border-l-4 border-blue-500">
+                  <p className="text-sm leading-relaxed">
+                    <strong className="text-blue-700 dark:text-blue-300">{currentCardData.name} Benefits:</strong> 
+                    <span className="ml-2">{currentCardData.highlight}</span>
+                  </p>
+                </div>
               </div>
             </div>
             
-            <div className="pt-2">
+            <div className="pt-4">
               <Button 
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
               >
                 Learn More About {currentCardData.id.toUpperCase()}
               </Button>
